@@ -96,7 +96,7 @@ pub fn create_act_gen_block() {
     let consensus_manager: ConsensusManager = ConsensusManagerBuilder::new(network).build();
     let factories = CryptoFactories::default();
     let mut header = BlockHeader::new(consensus_manager.consensus_constants().blockchain_version());
-    let value = consensus_manager.emission_schedule().supply_at_block(0);
+    let value = consensus_manager.emission_schedule().block_reward(0);
     let (mut utxo, key) = create_utxo(value, &factories, None);
     utxo.features = OutputFeatures::create_coinbase(1);
     let (pk, sig) = create_random_signature_from_s_key(key.clone(), 0.into(), 0);

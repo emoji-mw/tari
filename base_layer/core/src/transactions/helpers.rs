@@ -105,7 +105,6 @@ pub fn generate_keys() -> TestKeySet {
 
 /// Generate a random transaction signature, returning the public key (excess) and the signature.
 pub fn create_random_signature(fee: MicroTari, lock_height: u64) -> (PublicKey, Signature) {
-    let _rng = rand::thread_rng();
     let r = PrivateKey::random(&mut OsRng);
     let (k, p) = PublicKey::random_keypair(&mut OsRng);
     let tx_meta = TransactionMetadata {

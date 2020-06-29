@@ -20,7 +20,7 @@
 // WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 // USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-use crate::validation::error::ValidationError;
+use crate::validation::{chained::ChainedValidator, error::ValidationError};
 
 pub type Validator<T, B> = Box<dyn Validation<T, B>>;
 pub type StatelessValidator<T> = Box<dyn StatelessValidation<T>>;
@@ -38,3 +38,12 @@ pub trait StatelessValidation<T>: Send + Sync {
     /// General validation code that can run independent of external state
     fn validate(&self, item: &T) -> Result<(), ValidationError>;
 }
+
+pub trait StatelessValidationExt<T>: StatelessValidation<T> {
+    /// Consume this validator and create a chained validator that performs this validation followed by another
+    fn chain<V: StatelessValidation<T>>(self, other: V) -> ChainedValidator<Self, V>
+    where Self: Sized {
+        ChainedValidator::new(self, other)
+    }
+}
+impl<T, U> StatelessValidationExt<T> for U where U: StatelessValidation<T> {}
